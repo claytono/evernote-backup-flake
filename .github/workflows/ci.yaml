@@ -6,6 +6,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -14,6 +15,8 @@ jobs:
       id-token: "write"
       contents: "read"
 
+    # Add this condition to check if the PR is from a fork
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,7 +24,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: "Setup Cache"
+      - name: Setup Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check Nix flake inputs
@@ -32,4 +35,3 @@ jobs:
 
       - name: Build flake
         run: nix build --print-build-logs
-
