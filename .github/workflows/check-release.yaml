@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-flake:
+  release-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,6 +39,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: update-evernote-backup-${{ env.tag }}
+          base: main
           title: "Update evernote-backup to ${{ env.tag }}"
           body: "This PR updates evernote-backup to version ${{ env.tag }}."
           labels: 'release-update'
