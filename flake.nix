@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     evernote-backup-src = {
-      url = "github:vzhd1701/evernote-backup";
+      url = "github:vzhd1701/evernote-backup?ref=refs/tags/v1.9.3";
       flake = false;
     };
   };
