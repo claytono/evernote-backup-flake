@@ -1,0 +1,22 @@
+name: Lint GitHub Actions workflows
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+
+    # Add this condition to check if the PR is from a fork
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check workflow files
+        uses: docker://rhysd/actionlint:latest
+        with:
+          args: -color
