@@ -32,7 +32,7 @@ jobs:
             echo "Error: latest_tag is empty."
             exit 1
           fi
-          sed -i "s|url = \"github:vzhd1701/evernote-backup\";|url = \"github:vzhd1701/evernote-backup?rev=${latest_tag}\";|" flake.nix
+          sed -i "s|url = \"github:vzhd1701/evernote-backup\";|url = \"github:vzhd1701/evernote-backup?ref=refs/tags/${latest_tag}\";|" flake.nix
 
       - name: Push changes and create PR
         uses: peter-evans/create-pull-request@v6
