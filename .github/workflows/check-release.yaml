@@ -1,0 +1,40 @@
+name: Update evernote-backup Flake
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-flake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get latest release tag of evernote-backup
+        id: get_release
+        run: |
+          latest_tag=$(curl -s https://api.github.com/repos/vzhd1701/evernote-backup/releases/latest | jq -r .tag_name)
+          echo "Latest tag: $latest_tag"
+          echo "name=tag::$latest_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Update flake file
+        id: update_flake
+        run: |
+          latest_tag=${{ steps.get_release.outputs.tag }}
+          sed -i "s|url = \"github:vzhd1701/evernote-backup\";|url = \"github:vzhd1701/evernote-backup?rev=${latest_tag}\";|" flake.nix
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout -b update-evernote-backup-${latest_tag}
+          git add flake.nix
+          git commit -m "Update evernote-backup to ${latest_tag}"
+
+      - name: Push changes and create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update-evernote-backup-${{ steps.get_release.outputs.tag }}
+          title: "Update evernote-backup to ${{ steps.get_release.outputs.tag }}"
+          body: "This PR updates evernote-backup to version ${{ steps.get_release.outputs.tag }}."
+          labels: 'release-update'
